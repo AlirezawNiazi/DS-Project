@@ -142,6 +142,134 @@ def find_person(name):
         return None
     return people.get(hashed_name)
 
+
+def is_ancestor(name1, name2):
+    hashed_name1 = hash(name1.encode('utf-8'))
+    hashed_name2 = hash(name2.encode('utf-8'))
+
+    if hashed_name1 not in people or hashed_name2 not in people:
+        return False
+
+    current = hashed_name2
+    while current is not None:
+        current_person = people.get(current)
+        if current_person is None:
+            # Current person is not in the people dictionary
+            return False
+        current = current_person.father
+        if current == hashed_name1:
+            return True
+
+    return False
+
+
+def are_siblings(name1, name2):
+    hashed_name1 = hash(name1.encode('utf-8'))
+    hashed_name2 = hash(name2.encode('utf-8'))
+
+    if hashed_name1 not in people or hashed_name2 not in people:
+        return False
+
+    father1 = people[hashed_name1].father
+    father2 = people[hashed_name2].father
+
+    return father1 is not None and father1 == father2
+
+
+def are_distantly_related(name1, name2):
+    hashed_name1 = hash(name1.encode('utf-8'))
+    hashed_name2 = hash(name2.encode('utf-8'))
+
+    if hashed_name1 not in people or hashed_name2 not in people:
+        return False
+
+    ancestors1 = get_ancestors(hashed_name1)
+    ancestors2 = get_ancestors(hashed_name2)
+    common_ancestors = set(ancestors1).intersection(set(ancestors2))    #because intersection is not defined in list
+
+    return len(common_ancestors) > 0 and hashed_name1 not in ancestors2 and hashed_name2 not in ancestors1
+
+
+def find_common_ancestor(name1, name2):
+    hashed_name1 = hash(name1.encode('utf-8'))
+    hashed_name2 = hash(name2.encode('utf-8'))
+    if hashed_name1 not in people or hashed_name2 not in people:
+        return None
+    ancestors1 = get_ancestors(hashed_name1)
+    ancestors2 = get_ancestors(hashed_name2)
+    common_ancestors = set(ancestors1).intersection(set(ancestors2))
+    for ancestor in reversed(ancestors1):
+        if ancestor in common_ancestors:
+            return ancestor
+    return "no common ancestor"
+
+
+def get_ancestors(name):  # list of fathers
+    ancestors = []
+    current = name
+    while current in people:
+        current = people[current].father
+        if current:
+            ancestors.append(current)
+    return ancestors
+
+
+def find_farthest_descendant(name):
+    hashed_name = hash(name.encode('utf-8'))
+    if hashed_name not in people:
+        print(f"Person '{name}' not found.")
+        return 0
+    return dfs_farthest_descendant(people[hashed_name], 0)
+
+
+# we use dfs to find the furthest descendant , because it is located at the furthest nodes
+def dfs_farthest_descendant(node, current_depth):
+    if not node.children:
+        return current_depth
+    max_depth = current_depth
+    for child in node.children:
+        child_depth = dfs_farthest_descendant(people.get(child), current_depth + 1)
+        max_depth = max(max_depth, child_depth)
+    return max_depth
+
+
+def find_farthest_relationship():
+    max_distance = 0
+    farthest_pair = (None, None)
+
+    for person1 in people:
+        for person2 in people:
+            if person1 != person2:
+                distance = calculate_distance(person1, person2)
+                if distance == "no relationship":
+                    continue
+                if distance > max_distance:
+                    max_distance = distance
+                    farthest_pair = (person1, person2)
+    return farthest_pair
+
+
+def calculate_distance(name1, name2):
+    ancestor = find_common_ancestor(name1, name2)
+    if ancestor == "no common ancestor":
+        return "no relationship"
+
+    distance1 = 0
+    distance2 = 0
+    current1 = name1
+    current2 = name2
+    while current1 != ancestor:
+        current1 = people[current1].father
+        distance1 += 1
+
+    while current2 != ancestor:
+        current2 = people[current2].father
+        distance2 += 1
+
+    return distance2 + distance1
+
+    
+# menu part
 def menu():
     while True:
         activities = [
