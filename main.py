@@ -1,4 +1,6 @@
 import dataclasses
+import matplotlib.pyplot as plt
+import networkx as nx
 
 # functions for hash
 def right_rotate(value, shift):
