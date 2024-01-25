@@ -1,3 +1,5 @@
+import dataclasses
+
 # functions for hash
 def right_rotate(value, shift):
     return (value >> shift) | (value << (32 - shift)) & 0xFFFFFFFF
@@ -80,3 +82,62 @@ def hash(input):
     hash_result = ''.join(format(x, '08x') for x in h)
 
     return hash_result
+
+
+
+@dataclasses.dataclass
+class TreeNode:
+    father: str = None  # father's hash
+    children: list = dataclasses.field(default_factory=list)
+
+
+people = {}
+
+
+def add_person(parent_name, child_name):
+    parent_node = find_person(parent_name)
+
+    if parent_node is None:
+        print(f"Error: Parent node '{parent_name}' not found.")
+        return None
+
+    parent_hash = hash(parent_name.encode('utf-8'))
+    child_node = TreeNode(father=parent_hash)
+    child_hash = hash(child_name.encode('utf-8'))
+
+    people[child_hash] = child_node
+    parent_node.children.append(child_hash)
+
+    return child_node
+
+
+def size_of_data(node):
+    if node is None:
+        return "sorry, this node is not found"
+    if node.children == []:
+        return 0
+
+    count = len(node.children)
+    for child in node.children:
+        count += size_of_data(people.get(child))
+    return count
+
+
+def delete_person(name):
+    hashed_key = hash(name.encode('utf-8'))
+
+    if hashed_key not in people:
+        print(f"sorry! '{name}' not found.")
+        return
+    node = people[hashed_key]
+    if node.father is not None:  # check if it is not root
+        father = people[node.father]
+        father.children = [child for child in father.children if child != hashed_key]
+    del people[hashed_key]
+
+
+def find_person(name):
+    hashed_name = hash(name.encode('utf-8'))
+    if hashed_name not in people:
+        return None
+    return people.get(hashed_name)
