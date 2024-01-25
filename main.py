@@ -141,3 +141,51 @@ def find_person(name):
     if hashed_name not in people:
         return None
     return people.get(hashed_name)
+
+def menu():
+    while True:
+        activities = [
+        "Add a new person to the family tree.",
+        "Get the size of the family tree.",
+        "Delete a person from the family tree.",
+        "Find a person.",
+        "Check if one person is an ancestor of another.",
+        "Check if two people are siblings.",
+        "Check if two people are distantly related.",
+        "Find the common ancestor of two people.",
+        "Find the farthest descendant of a person.",
+        "Find the farthest relationship in the family tree.",
+        "Visualize the family tree.",
+        "Exit."]
+
+        print('\n')
+        for i, activity in enumerate(activities, start=1):
+            print(f"{i}. {activity}")
+        option =input("\nPlease choose an option (1-12):")
+        if not option.isdigit():
+          print("input is not digits")
+          continue
+
+        x = int(option)
+        if x<1 or x>12:
+           print("x is not a valid number")
+           continue
+
+
+        if x == 1:
+            name1 = input("Enter parent name: ")
+            name2 = input("Enter child name: ")
+            add_person(name1, name2)
+
+        elif x == 2:
+            name = input("Enter name of node:")
+            node = find_person(name)
+            print(size_of_data(node))
+
+        elif x == 3:
+            name = input("Enter name: ")
+            delete_person(name)
+
+        elif x == 4:
+            name = input("Enter name: ")
+            print(find_person( name))
