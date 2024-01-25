@@ -268,6 +268,34 @@ def calculate_distance(name1, name2):
 
     return distance2 + distance1
 
+
+# visualization
+def visualize_family_tree(root):
+    if not root:
+        print("The tree is empty")
+        return
+
+    G = nx.DiGraph()
+
+    def add_nodes_and_edges(node_key):
+        node = people.get(node_key)
+        if node:
+            G.add_node(node_key[:10])
+            if node.father:
+                G.add_edge(node.father[:10], node_key[:10])
+            for child in node.children:
+                add_nodes_and_edges(child)
+
+    add_nodes_and_edges(root_hashed)
+    plt.figure(figsize=(10, 8))
+    pos = nx.spring_layout(G)
+
+    nx.draw(G, pos, with_labels=True, node_size=2000, node_color="skyblue", font_size=10, font_weight="bold",
+            arrows=True)
+    plt.show()
+
+
+
     
 # menu part
 def menu():
