@@ -347,3 +347,45 @@ def menu():
         elif x == 4:
             name = input("Enter name: ")
             print(find_person( name))
+        elif x == 5:
+            name1 = input("Enter name of node1: ")
+            name2 = input("Enter name of node2: ")
+            print(is_ancestor(name1, name2))
+
+        elif x == 6:
+            name1 = input("Enter name of node1: ")
+            name2 = input("Enter name of node2: ")
+            print(are_siblings(name1, name2))
+
+        elif x == 7:
+            name1 = input("Enter name of node1: ")
+            name2 = input("Enter name of node2: ")
+            print(are_distantly_related(name1, name2))
+
+        elif x == 8:
+            name1 = input("Enter name of node1: ")
+            name2 = input("Enter name of node2: ")
+            print(find_common_ancestor(name1, name2))
+
+        elif x == 9:
+            name = input("Enter name of node: ")
+            print(find_farthest_descendant(name))
+
+        elif x == 10:
+            print(find_farthest_relationship())
+
+        elif x == 11:
+            visualize_family_tree(root)
+
+        elif x == 12:
+            break
+
+
+if len(people)==0:
+  root_name = input("Enter the name of the root node: ")
+  # Create the root node
+  root = TreeNode()
+  root_hashed = hash(root_name.encode('utf-8'))
+  people[root_hashed] = root
+
+menu()
